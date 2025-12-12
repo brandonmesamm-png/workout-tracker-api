@@ -1,0 +1,8 @@
+SIMULATED COMMITS:
+1. Initial commit - estructura base
+2. Scaffold users
+3. GET users
+4. POST users
+5. PUT/PATCH users
+6. DELETE users
+...
