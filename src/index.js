@@ -1,20 +1,39 @@
-import express from "express";
+import express from 'express';
+import usersRouter from './routes/users.routes.js'; // Asegúrate de que la ruta sea correcta
 
 const app = express();
+const PORT = 3000;
+
+// Middleware para parsear JSON
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "Workout Tracker API funcionando" });
+// Ruta de usuarios
+app.use("/users", usersRouter);
+
+// Inicia el servidor
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+const workoutsRoutesPath = "./routes/workouts.routes.js";
+const exercisesRoutesPath = "./routes/exercises.routes.js";
 
-import usersRoutes from "./routes/users.routes.js";
-import workoutsRoutes from "./routes/workouts.routes.js";
-import exercisesRoutes from "./routes/exercises.routes.js";
+(async () => {
+  try {
+    const workouts = await import(workoutsRoutesPath);
+    app.use("/workouts", workouts.default);
+  } catch (err) {
+    console.warn("Ruta /workouts no cargada (archivo ausente)");
+  }
 
-app.use("/users", usersRoutes);
-app.use("/workouts", workoutsRoutes);
-app.use("/exercises", exercisesRoutes);
+  try {
+    const exercises = await import(exercisesRoutesPath);
+    app.use("/exercises", exercises.default);
+  } catch (err) {
+    console.warn("Ruta /exercises no cargada (archivo ausente)");
+  }
 
-app.listen(3000, () => {
-  console.log("Servidor ejecutándose en http://localhost:3000");
-});
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
+})();
